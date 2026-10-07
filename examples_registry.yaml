@@ -91,3 +91,17 @@ examples:
     defaults:
       prompt: [talker]
     bot: examples.frontend_backend_agent.pipeline:bot
+
+  genesys-audiohook-assistant:
+    label: Genesys Cloud Audio Connector Assistant
+    services:
+      llm: [nemotron-lightning]
+      asr: [nemotron-asr-streaming-english]
+      tts: [magpie-multilingual-tts]
+    activity_check:
+      first_warning_s: 30
+      second_warning_s: 15
+      warning_completion_timeout_s: 30
+    defaults:
+      prompt: [customer_care]
+    bot: examples.genesys_audiohook.pipeline:bot

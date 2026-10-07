@@ -13,6 +13,7 @@ name: nemotron-voice-agent
 #   omni-assistant               Cascaded Omni LLM + TTS Pipeline (Omni Assistant)
 #   omni-assistant-subagents     Cascaded Omni LLM + TTS Pipeline (Omni Assistant Subagents)
 #   frontend-backend-agent               Cascaded Frontend/Backend Agent Pipeline (Airline Assistant)
+#   genesys-audiohook-assistant  Cascaded backend for Genesys Cloud Audio Connector (AudioHook)
 #
 # Hardware targets:
 #   server                    NIM ASR + LLM + TTS. Recommended for scaling
@@ -39,6 +40,7 @@ name: nemotron-voice-agent
 #   docker compose --profile omni-assistant-subagents/single-gpu up
 #   docker compose --profile frontend-backend-agent/server up
 #   docker compose --profile frontend-backend-agent/single-gpu up
+#   docker compose --profile genesys-audiohook-assistant up
 #
 # Observability profiles compose orthogonally with any recipe:
 #   docker compose --profile <recipe> --profile tracing up   # Phoenix OTel
@@ -248,3 +250,19 @@ services:
       EXAMPLE_SELECTION: ${EXAMPLE_SELECTION:-frontend-backend-agent}
       THINKER_TOOL_TIMEOUT_SECONDS: ${THINKER_TOOL_TIMEOUT_SECONDS:-90}
       FRONTEND_BACKEND_DIRECT_TOOL_RESPONSE: ${FRONTEND_BACKEND_DIRECT_TOOL_RESPONSE:-true}
+
+  genesys-audiohook-assistant:
+    <<: *app-base
+    profiles:
+      - genesys-audiohook-assistant
+    environment:
+      <<: *app-env
+      EXAMPLE_SELECTION: genesys-audiohook-assistant
+      SERVICE_RECIPE: cloud
+      TRANSPORT_SELECTION: websocket
+      PIPELINE_TLS: "${PIPELINE_TLS:-false}"
+      USE_SILERO_VAD_TURN_DETECTION: "true"
+      SILERO_VAD_STOP_SECS: "${SILERO_VAD_STOP_SECS:-0.8}"
+      GENESYS_AUDIOHOOK_API_KEY: "${GENESYS_AUDIOHOOK_API_KEY:-}"
+      GENESYS_AUDIOHOOK_CLIENT_SECRET: "${GENESYS_AUDIOHOOK_CLIENT_SECRET:-}"
+      GENESYS_AUDIOHOOK_ALLOW_UNAUTHENTICATED: "${GENESYS_AUDIOHOOK_ALLOW_UNAUTHENTICATED:-false}"
